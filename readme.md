@@ -1,1 +1,1 @@
-init.md
+about base knowlege
