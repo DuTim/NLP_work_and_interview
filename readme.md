@@ -1,3 +1,2 @@
 about base knowlege
 
-t
