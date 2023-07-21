@@ -65,5 +65,3 @@ Incontext learning is a paradigm that allows language models to learn tasks give
 * ## **结论1：ICL中Ground Truth信息无关紧要**
 
 * ## **结论2：ICL的性能收益主要来自独立规范的输入空间和标签空间，以及正确一致的演示格式**
-
-

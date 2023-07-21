@@ -119,13 +119,9 @@ $$
 
 ---
 
-
-
 ##### Soft Prompts
 
 ---
-
-
 
 ##### PET（Pattern-Exploiting Training，2020.1）
 
@@ -162,8 +158,6 @@ $$
   <img src="assets/img/2023-07-08-21-43-34-image.png" title="" alt="" width="478">
   
   ---
-  
-  
 
 ##### P-tuning（清华2022.2）
 
@@ -274,8 +268,6 @@ FAR（Vucetic等人，2022年）选择参数矩阵的列进行剪枝，并将线
 + 阶段一：确定参数矩阵中最重要的行进行更新。这个过程类似于结构化剪枝，并可以使用任何剪枝方法。
 + 阶段二：将每个参数W拆分为可训练部分W_t和冻结部分W_f，对偏置也执行类似的操作，然后将结果连接起来，重新配置网络。
 
-
-
 ---
 
 #### Reparametrization-based PEFT：
@@ -306,8 +298,6 @@ h=W_0 x+\Delta W x=W_0 x+B A x
 \end{equation}
 $$
 
-
-
 $$
 \begin{equation}
 \text { 其中 } W_0 \in \mathbb{R}^{d \times k}, B \in \mathbb{R}^{d \times r} ， A \in \mathbb{R}^{r \times k} \text { 。 }
@@ -317,8 +307,6 @@ $$
 第一个矩阵的A的权重参数会通过高斯函数初始化，而第二个矩阵的B的权重参数则会初始化为零矩阵，这样能保证训练开始时新增的通路BA=0从而对模型结果没有影响。
 
 在推理时，将左右两部分的结果加到一起即可， $ H = W_oX + BA_x$ 所以只要将训练完成的矩阵乘积BA跟原本的权重矩阵$W_o$加到一起作为新权重参数替换原本PLM的即可，对于推理来说，不会增加额外的计算资源。
-
-
 
 此外，Transformer的权重矩阵包括Attention模块里用于计算query, key, value的Wq，Wk，Wv以及多头attention的Wo,以及MLP层的权重矩阵，LoRA只应用于Attention模块中的4种权重矩阵，而且通过消融实验发现同时调整 Wq 和 Wv 会产生最佳结果。
 
@@ -380,8 +368,6 @@ QLORA 有一种低精度存储数据类型（4 bit），还有一种计算数据
 <img title="" src="assets/img/2023-07-08-22-41-11-image.png" alt="" width="808">
 
 ---
-
-
 
 #### 混合方法
 
