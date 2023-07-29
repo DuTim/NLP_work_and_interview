@@ -2,9 +2,11 @@
 
 [pre_norm and post norm ref:](https://zhuanlan.zhihu.com/p/494661681)
 
-<img title="" src="assets/img/2023-07-29-19-51-46-image.png" alt="" width="439">
+<img src="assets/img/2023-07-29-22-07-52-image.png" title="" alt="" width="324">
 
-<img title="" src="assets/img/2023-07-29-19-52-06-image.png" alt="" width="439">
+<img title="" src="assets/img/2023-07-29-19-51-46-image.png" alt="" width="328">
+
+<img title="" src="assets/img/2023-07-29-19-52-06-image.png" alt="" width="331">
 
 同一设置之下，Pre Norm结构往往更容易训练，但最终效果通常不如Post Norm。Pre Norm更容易训练好理解，因为它的恒等路径更突出.
 
@@ -47,7 +49,9 @@ $$
 
 说白了，Pre Norm结构无形地增加了模型的宽度而降低了模型的深度，而我们知道深度通常比宽度更重要，所以是无形之中的降低深度导致最终效果变差了。而Post Norm刚刚相反，在**[《浅谈Transformer的初始化、参数化与标准化》](https://link.zhihu.com/?target=https%3A//kexue.fm/archives/8620)**中我们就分析过，它每Norm一次就削弱一次恒等分支的权重，所以Post Norm反而是更突出残差分支的，因此Post Norm中的层数更加“足秤”，一旦训练好之后效果更优。
 
-### transformer 中的实现:
+
+
+### transformer 中关于norm使用的的例子:
 
 1. 对主分支进行 dropout 
 
@@ -85,6 +89,45 @@ class EncoderLayer(nn.Module):
         return x
 ```
 
-# 2.
+#### pytorch 中实现 layernorm
 
-### 
+```python
+class LayerNorm(nn.Module):
+    def __init__(self, d_model, eps=1e-12):
+        super(LayerNorm, self).__init__()
+        self.gamma = nn.Parameter(torch.ones(d_model))
+        self.beta = nn.Parameter(torch.zeros(d_model))
+        self.eps = eps
+
+    def forward(self, x):
+        mean = x.mean(-1, keepdim=True)
+        var = x.var(-1, unbiased=False, keepdim=True)
+        # '-1' means last dimension.
+        out = (x - mean) / torch.sqrt(var + self.eps)
+        out = self.gamma * out + self.beta
+        return out
+```
+
+
+
+# 2. drop out
+
+ref: https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html?highlight=dropout#torch.nn.Dropout
+
+<img src="assets/img/2023-07-29-22-10-13-image.png" title="" alt="" width="713">
+
+
+
+
+
+# 1 batch norm 的顺序问题
+
+## 核心 ref :  [(94条消息) batch normalize、relu、dropout 等的相对顺序_batchnormalization层、convolution层和relu层_littlepineapple的博客-CSDN博客](https://blog.csdn.net/dunlongzun8445/article/details/107612252)
+
+应为 Batch Normalization 可以激活层提供期望的分布  所以: 因此<mark> Batch Normalization 层恰恰插入在 Conv 层或全连接层之后</mark>，而在 ReLU等激活层之前。而对于 dropout 则应当置于 activation layer 之后。
+
+例如 通过BN 后 可以避免落入 sigmoid 的两端 梯度较小的区域
+
+
+
+#### FC ==> BN ==> Relu/Sigmoid ==> dropout
