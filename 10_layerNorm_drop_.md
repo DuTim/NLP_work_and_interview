@@ -49,8 +49,6 @@ $$
 
 说白了，Pre Norm结构无形地增加了模型的宽度而降低了模型的深度，而我们知道深度通常比宽度更重要，所以是无形之中的降低深度导致最终效果变差了。而Post Norm刚刚相反，在**[《浅谈Transformer的初始化、参数化与标准化》](https://link.zhihu.com/?target=https%3A//kexue.fm/archives/8620)**中我们就分析过，它每Norm一次就削弱一次恒等分支的权重，所以Post Norm反而是更突出残差分支的，因此Post Norm中的层数更加“足秤”，一旦训练好之后效果更优。
 
-
-
 ### transformer 中关于norm使用的的例子:
 
 1. 对主分支进行 dropout 
@@ -108,17 +106,11 @@ class LayerNorm(nn.Module):
         return out
 ```
 
-
-
 # 2. drop out
 
 ref: https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html?highlight=dropout#torch.nn.Dropout
 
 <img src="assets/img/2023-07-29-22-10-13-image.png" title="" alt="" width="713">
-
-
-
-
 
 # 1 batch norm 的顺序问题
 
@@ -127,7 +119,5 @@ ref: https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html?highlight=d
 应为 Batch Normalization 可以激活层提供期望的分布  所以: 因此<mark> Batch Normalization 层恰恰插入在 Conv 层或全连接层之后</mark>，而在 ReLU等激活层之前。而对于 dropout 则应当置于 activation layer 之后。
 
 例如 通过BN 后 可以避免落入 sigmoid 的两端 梯度较小的区域
-
-
 
 #### FC ==> BN ==> Relu/Sigmoid ==> dropout
