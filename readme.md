@@ -1,1 +1,1 @@
-about base knowlege
+整理的部分有用的关于NLP的知识点
