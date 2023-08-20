@@ -87,7 +87,7 @@ $Z = Q_{max} - \frac{R_{max}}{S}$
 > 3. 另外一个问题就是每一层的数值范围不一定都相同，activation在不同层的数值范围会不一样，这就会产生另外一个问题，动态值域问题，dynamic range。
 > 
 > 4. round会肯定会带来误差，怎么处理呢？Stochastic rounding，因为其期望是x，可以减少round的误差.
-> 
+>    
 >    ![](assets/img/2023-08-15-20-30-21-image.png)
 
 ### **矩阵乘法实现**

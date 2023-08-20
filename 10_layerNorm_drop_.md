@@ -1,5 +1,7 @@
 # 1 pre_norm  and post_norm
 
+[Meta最新模型LLaMA细节与代码详解_常鸿宇的博客-CSDN博客](https://blog.csdn.net/weixin_44826203/article/details/129255185)
+
 [pre_norm and post norm ref:](https://zhuanlan.zhihu.com/p/494661681)
 
 <img src="assets/img/2023-07-29-22-07-52-image.png" title="" alt="" width="324">
@@ -48,6 +50,22 @@ $$
 这个意思是说，当比t较大时，$x_t$与$x_{t+1}$相差较小，所以$F_{t}({Norm}\left(\boldsymbol{x}_{t}\right))$与$F_{t+1}({Norm}\left(\boldsymbol{x}_{t+1}\right))$很接近，因此原本一个t层的模型与t+1层的和，近似等效于一个更宽的层模型，所以在Pre Norm中多层叠加的结果更多是增加宽度而不是深度，层数越多，这个层就越“虚”。
 
 说白了，Pre Norm结构无形地增加了模型的宽度而降低了模型的深度，而我们知道深度通常比宽度更重要，所以是无形之中的降低深度导致最终效果变差了。而Post Norm刚刚相反，在**[《浅谈Transformer的初始化、参数化与标准化》](https://link.zhihu.com/?target=https%3A//kexue.fm/archives/8620)**中我们就分析过，它每Norm一次就削弱一次恒等分支的权重，所以Post Norm反而是更突出残差分支的，因此Post Norm中的层数更加“足秤”，一旦训练好之后效果更优。
+
+
+
+post-norm和pre-norm其实各有优势，post-norm在残差之后做归一化，对参数正则化的效果更强，进而模型的鲁棒性也会更好；pre-norm相对于post-norm，因为有一部分参数直接加在了后面，不需要对这部分参数进行正则化，正好可以防止模型的梯度爆炸或者梯度消失，因此，这里笔者可以得出的一个结论是如果层数少post-norm的效果其实要好一些，如果要把层数加大，为了保证模型的训练，pre-norm显然更好一些。
+
+### RMSNorm
+
+<img src="assets/img/2023-08-20-19-45-50-image.png" title="" alt="" width="787">
+
+RMSNorm是对LayerNorm的一个改进，没有做re-center操作（移除了其中的均值项），可以看作LayerNorm在均值为0时的一个特例。论文通过实验证明，re-center操作不重要。
+RMSNorm 也是一种标准化方法，但与 LayerNorm 不同，它不是使用整个样本的均值和方差，而是使用平方根的均值来归一化，这样做可以降低噪声的影响。
+<mark>这里的 ai与Layer Norm中的 x 等价，作者认为这种模式在简化了Layer Norm的同时，可以在各个模型上减少约 7%∼64% 的计算时间</mark>
+
+
+
+
 
 ### transformer 中关于norm使用的的例子:
 
